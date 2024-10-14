@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Part 3</title>
+    <style>
+        #board {
+            display: flex;
+            flex-wrap: wrap;
+            width: 300px; 
+            margin: 0 auto;
+        }
+
+        .square {
+            width: 90px;
+            height: 90px;
+            background-color: #d3d3d3; 
+            text-align: center;
+            font-size: 64px;
+            font-weight: bold;
+            line-height: 90px;
+            margin: 5px;
+        }
+
+        .square:hover {
+            background-color: #808080;
+        }
+
+        #turnIndicator {
+            text-align: center;
+            border: 2px solid #000;
+            width: 300px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        #winCondition {
+            text-align: center;
+            border: 2px solid #000;
+            width: 300px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #52109f; 
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            font-size: 50px; 
+        }
+        #buttonContainer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        button{
+            margin: 20px auto;
+            font-size: 20px;
+            background-color: #808080;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+
+    <div id="buttonContainer">
+        <button id="startButton">Start Game</button>
+    </div>
+    
+    <div id="turnIndicator">X's turn!</div>
+    
+    <div id="board">
+        <script>
+            const NUM_SQUARES = 9;
+            for (let i = 0; i < NUM_SQUARES; i++) {
+                const id = "sq" + i;
+                document.write("<div class='square' id='" + id + "'></div>");
+            }
+        </script>
+    </div>
+
+    <div id="winCondition">Still no winner!</div>
+
+    <script>
+        let currentPlayer; 
+        let gameOn = true; 
+
+        const turnIndicator = document.getElementById("turnIndicator");
+        const winConditionStatus = document.getElementById("winCondition");
+
+        const squares = document.querySelectorAll(".square");
+        let moves = Array(9).fill("-"); 
+
+        function chooseStartingPlayer() {
+            currentPlayer = Math.random() < 0.5 ? "X" : "O";
+            turnIndicator.innerText = `${currentPlayer}'s turn!`;
+        }
+
+        function eventHandler(event) {
+            const square = event.target;
+            const squareNumber = square.id.replace("sq", "");
+
+            if (square.innerText === "" && gameOn) {
+                square.innerText = currentPlayer;
+                moves[squareNumber] = currentPlayer; 
+
+                gameStatus(); 
+
+                if (currentPlayer === "X") {
+                    currentPlayer = "O";
+                } else {
+                    currentPlayer = "X";
+                }
+                turnIndicator.innerText = `${currentPlayer}'s turn!`;
+            }
+        }
+
+        function gameStatus() {
+            const winConditions = [
+                moves[0] + moves[1] + moves[2], 
+                moves[3] + moves[4] + moves[5], 
+                moves[6] + moves[7] + moves[8], 
+                moves[0] + moves[3] + moves[6], 
+                moves[1] + moves[4] + moves[7], 
+                moves[2] + moves[5] + moves[8], 
+                moves[0] + moves[4] + moves[8], 
+                moves[2] + moves[4] + moves[6], 
+            ]; 
+
+            for (const condition of winConditions) {
+                if (condition == "XXX") {
+                    winConditionStatus.innerText = "X wins!"; 
+                    endGame(); 
+                    return; 
+                } else if (condition == "OOO") {
+                    winConditionStatus.innerText = "O wins!"; 
+                    endGame(); 
+                    return; 
+                }
+            }
+            
+            if (!moves.includes("-")){
+                winConditionStatus.innerText = "It's a tie!"; 
+                endGame(); 
+            }
+        }
+
+
+        function endGame() {
+            gameOn = false; 
+        }
+
+        function startGame() {
+            squares.forEach(square => {
+                square.innerText = ""; 
+            });
+            moves = Array(9).fill("-"); 
+            gameOn = true; 
+            winConditionStatus.innerText = "Still no winner!";
+            chooseStartingPlayer(); 
+        }
+
+        squares.forEach(square => {
+            square.onclick = eventHandler; 
+        });
+
+        document.getElementById("startButton").onclick = startGame;
+
+        startGame();
+    </script>
+</body>
+</html>
